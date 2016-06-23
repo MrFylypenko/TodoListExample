@@ -1,0 +1,184 @@
+<div class="modal-header">
+    <button class="close glyphicon glyphicon-remove" data-dismiss="modal" ng-click="vm.cancel()"></button>
+    <h4 class="modal-title">Edit task</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="inputProjectName1" class="col-sm-2 control-label">Project</label>
+
+            <div class="col-sm-10">
+                <input type="text" ng-model="vm.editTask.project.name" class="form-control" ng-disabled="true"
+                       id="inputProjectName1">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputNameEdit" class="col-sm-2 control-label">Name</label>
+
+            <div class="col-sm-10">
+                <input type="text" ng-model="vm.editTask.name" class="form-control" id="inputNameEdit"
+                       placeholder="Name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputDescriptionEdit" class="col-sm-2 control-label">Description</label>
+
+            <div class="col-sm-10">
+                                <textarea id="inputDescriptionEdit" ng-model="vm.editTask.description"
+                                          class="form-control" style=" max-width: 100%; "
+                                          rows="7"
+                                          ng-disabled="globals.currentUser.username != vm.editTask.createdBy.username"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputStatusEdit" class="col-sm-2 control-label">Status</label>
+
+            <div class="col-sm-10">
+
+                <select id="inputStatusEdit" class="form-control" name="singleSelect"
+                        ng-model="vm.editTask.status">
+                    <option selected value="TODO">Todo</option>
+                    <option value="DOING">Doing</option>
+                    <option value="DONE">Done</option>
+                </select>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputPriorityEdit" class="col-sm-2 control-label">Priority</label>
+
+            <div class="col-sm-10">
+                <select id="inputPriorityEdit" class="form-control" name="singleSelect2"
+                        ng-model="vm.editTask.priority">
+                    <option value="LOW">LOW</option>
+                    <option value="MEDIUM">MEDIUM</option>
+                    <option value="HIGH">HIGH</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputPerformerEdit" class="col-sm-2 control-label">Performer</label>
+
+            <div class="col-sm-10">
+                <ui-select ng-model="vm.editTask.performer" id="inputPerformerEdit"
+                           ng-disabled="globals.currentUser.username != vm.editTask.createdBy.username">
+                    <ui-select-match placeholder="SELECT BALBANANA">{{$select.selected.username}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="item in vm.users | filter: $select.search track by item.id"
+                                       refresh="vm.getUsers($select.search)"
+                                       refresh-delay="3">
+                        <span ng-bind="item.username"></span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputCreatedByEdit" class="col-sm-2 control-label">Created By</label>
+
+            <div class="col-sm-10">
+                <input type="text" ng-model="vm.editTask.createdBy.username" class="form-control"
+                       id="inputCreatedByEdit"
+                       placeholder="Name" ng-disabled="true">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputCreatedDate" class="col-sm-2 control-label">Created date</label>
+
+            <div class="col-sm-10">
+                <span ng-disabled="true" id="inputCreatedDate" class="form-control"> {{vm.editTask.createdDate | date:'yyyy-MM-dd HH:mm:ss'}}</span>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" ng-click="vm.updateTask()" class="btn btn-default">Save task</button>
+            </div>
+        </div>
+
+        <div>
+            <div class="panel panel-default">
+                <!--<div class="panel-heading">Files</div>-->
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Files</th>
+                        <th>Created</th>
+                        <th>Created By</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="file in vm.editTask.files | orderBy: 'id'">
+                        <td><i class="glyphicon glyphicon-paperclip"></i>
+                            <a target="_self" href="file/{{file.id}}">
+                                {{file.fileName}} </a> <span>({{file.fileSize | bytes}})</span>
+                        </td>
+                        <td> {{file.createdDate | date:'yyyy-MM-dd HH:mm'}}</td>
+                        <td>{{file.createdBy.username}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="panel-footer">
+                    <input style="float: left;" class="btn-sm " type="file" value="добавить файл"
+                           file-model="vm.myFile">
+
+                    <button type="button" class="btn btn-success btn-sm " ng-click="vm.uploadFile()">Add
+                    </button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <hr>
+        <br>
+
+        <div>
+            <div class="row" ng-repeat="comment in vm.editTask.comments | orderBy: 'id'">
+                <div class="col-sm-1"
+                     ng-if="globals.currentUser.username != comment.createdBy.username">
+                    <div class="thumbnail">
+                        <img class="img-responsive user-photo"
+                             src="resources/images/avatar_2x.png">
+                    </div>
+                </div>
+                <div class="col-sm-11">
+                    <div class="panel panel-default ">
+                        <div class="panel-heading"> {{comment.createdBy.firstName}}
+                            {{comment.createdBy.lastName}} - {{comment.createdDate | date:'yyyy-MM-dd HH:mm'}}
+                        </div>
+                        <div class="panel-body">
+                            {{comment.value}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-1"
+                     ng-if="globals.currentUser.username == comment.createdBy.username">
+                    <div class="thumbnail">
+                        <img class="img-responsive user-photo"
+                             src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="input-group ">
+                        <!--<div><label for="addComment">Add comment</label></div>-->
+
+                        <form>
+                            <input id="addComment"  type="text" class="form-control" placeholder="Add comment"
+                                   ng-model="vm.comment.value" required>
+                                  <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit"  ng-click="vm.addComment()">
+                                        Add
+                                    </button>
+                                  </span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

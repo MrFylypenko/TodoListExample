@@ -1,0 +1,99 @@
+<div class="row">
+
+    <div class="col-lg-4">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                TODO
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>CreatedBy</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="task in vm.myTasksTodo">
+                        <td> {{task.name}}</td>
+                        <td> {{task.createdBy.username}}</td>
+                        <td>
+                            <button class="btn btn-warning btn-xs glyphicon glyphicon-pencil"
+                                    data-ng-click="vm.modalEditTaskOpen(task.id)"></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                Total : {{vm.myTasksTodoTotal}} tasks.
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                DOING
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>CreatedBy</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="task in vm.myTasksDoing">
+                        <td> {{task.name}}</td>
+                        <td> {{task.createdBy.username}}</td>
+                        <td>
+                            <button class="btn btn-warning btn-xs glyphicon glyphicon-pencil"
+                                    data-ng-click="vm.modalEditTaskOpen(task.id)"></button>
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                Total : {{vm.myTasksDoingTotal}} tasks.
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                DONE
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>CreatedBy</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="task in vm.myTasksDone">
+                        <td> {{task.name}}</td>
+                        <td> {{task.createdBy.username}}</td>
+                        <td>
+                            <button class="btn btn-warning btn-xs glyphicon glyphicon-pencil"
+                                    data-ng-click="vm.modalEditTaskOpen(task.id)"></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                Total : {{vm.myTasksDoneTotal}} tasks.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

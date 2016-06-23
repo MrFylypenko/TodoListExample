@@ -1,0 +1,255 @@
+<div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th ng-click="vm.field='id'; vm.reverse = !vm.reverse; vm.getAll()">
+                <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'id')"></i>
+                <i style="color:red" class="glyphicon glyphicon-chevron-down "
+                   ng-show="(vm.field == 'id') && !vm.reverse"></i>
+                <i style="color:red" class="glyphicon glyphicon-chevron-up "
+                   ng-show="(vm.field == 'id') && vm.reverse"></i>
+                Id
+            </th>
+            <th ng-click="vm.field='name'; vm.reverse = !vm.reverse; vm.getAll()">
+                <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'name')"></i>
+                <i style="color:red" class="glyphicon glyphicon-chevron-down "
+                   ng-show="(vm.field == 'name') && !vm.reverse"></i>
+                <i style="color:red" class="glyphicon glyphicon-chevron-up "
+                   ng-show="(vm.field == 'name') && vm.reverse"></i>
+                Name
+            </th>
+            <th ng-click="vm.field='description'; vm.reverse = !vm.reverse; vm.getAll()">
+                <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'description')"></i>
+                <i style="color:red" class="glyphicon glyphicon-chevron-down "
+                   ng-show="(vm.field == 'description') && !vm.reverse"></i>
+                <i style="color:red" class="glyphicon glyphicon-chevron-up "
+                   ng-show="(vm.field == 'description') && vm.reverse"></i>
+                DESCRIPTION
+            </th>
+            <th ng-click="vm.field='createdDate'; vm.reverse = !vm.reverse; vm.getAll()">
+                <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'createdDate')"></i>
+                <i style="color:red" class="glyphicon glyphicon-chevron-down "
+                   ng-show="(vm.field == 'createdDate') && !vm.reverse"></i>
+                <i style="color:red" class="glyphicon glyphicon-chevron-up "
+                   ng-show="(vm.field == 'createdDate') && vm.reverse"></i>
+                createdDate
+            </th>
+            <th ng-click="vm.field='createdBy.username'; vm.reverse = !vm.reverse; vm.getAll()">
+                <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'createdBy.username')"></i>
+                <i style="color:red" class="glyphicon glyphicon-chevron-down "
+                   ng-show="(vm.field == 'createdBy.username') && !vm.reverse"></i>
+                <i style="color:red" class="glyphicon glyphicon-chevron-up "
+                   ng-show="(vm.field == 'createdBy.username') && vm.reverse"></i>
+                createdBy
+            </th>
+            <th>
+                Buttons
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat-start="project in vm.projects track by $index">
+            <td>
+                {{project.id}}
+            </td>
+            <td>
+                {{project.name}}
+            </td>
+            <td>
+                {{project.description}}
+            </td>
+            <td>
+                {{project.createdDate | date:'yyyy-MM-dd HH:mm'}}
+            </td>
+            <td>
+                {{project.createdBy.username}}
+            </td>
+            <td>
+                <button type="button " class="btn btn-xs" ng-click="vm.toggleTasks(project)">
+                    <i ng-if="!project.show" class="glyphicon glyphicon-resize-full"></i>
+                    <i ng-if="project.show" class="glyphicon glyphicon-resize-small"></i>
+                </button>
+                <button class="btn btn-warning btn-xs glyphicon glyphicon-pencil"
+                        data-ng-click="vm.modalEditProject(project.id)"></button>
+
+                <button type="button " class="btn btn-xs btn-danger glyphicon glyphicon-remove"
+                        ng-click="vm.deleteProject(project.id)"></button>
+
+
+                Done {{project.done}}/{{project.todo + project.doing + project.done}}
+            </td>
+        </tr>
+        <tr ng-if="project.show">
+            <td colspan="6" ng-init="vm.project = project">
+
+                <table class="table table-bordered" ng-controller="TaskViewerInProjectController as vm">
+                    <tr>
+                        <th ng-click="vm.field='id'; vm.reverse = !vm.reverse; vm.getAll()">
+                            <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'id')"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-down "
+                               ng-show="(vm.field == 'id') && !vm.reverse"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-up "
+                               ng-show="(vm.field == 'id') && vm.reverse"></i>
+                            Id
+                        </th>
+                        <th ng-click="vm.field='name'; vm.reverse = !vm.reverse; vm.getAll()">
+                            <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'name')"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-down"
+                               ng-show="(vm.field == 'name') && !vm.reverse"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-up"
+                               ng-show="(vm.field == 'name') && vm.reverse"></i>
+                            Name
+                        </th>
+                        <th ng-click="vm.field='status'; vm.reverse = !vm.reverse; vm.getAll()">
+                            <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'status')"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-down"
+                               ng-show="(vm.field == 'status') && !vm.reverse"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-up"
+                               ng-show="(vm.field == 'status') && vm.reverse"></i>
+                            Status
+                        </th>
+                        <th ng-click="vm.field='createdDate'; vm.reverse = !vm.reverse; vm.getAll()">
+                            <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'createdDate')"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-down"
+                               ng-show="(vm.field == 'createdDate') && !vm.reverse"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-up"
+                               ng-show="(vm.field == 'createdDate') && vm.reverse"></i>
+                            Created date
+                        </th>
+                        <th ng-click="vm.field='priority'; vm.reverse = !vm.reverse; vm.getAll()">
+                            <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'priority')"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-down"
+                               ng-show="(vm.field == 'priority') && !vm.reverse"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-up"
+                               ng-show="(vm.field == 'priority') && vm.reverse"></i>
+                            Priority
+                        </th>
+                        <th ng-click="vm.field='createdBy.username'; vm.reverse = !vm.reverse; vm.getAll()">
+                            <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'createdBy.username')"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-down"
+                               ng-show="(vm.field == 'createdBy.username') && !vm.reverse"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-up"
+                               ng-show="(vm.field == 'createdBy.username') && vm.reverse"></i>
+                            Created
+                        </th>
+                        <th ng-click="vm.field='performer.username'; vm.reverse = !vm.reverse; vm.getAll()">
+                            <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'performer.username')"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-down"
+                               ng-show="(vm.field == 'performer.username') && !vm.reverse"></i>
+                            <i style="color:red" class="glyphicon glyphicon-chevron-up"
+                               ng-show="(vm.field == 'performer.username') && vm.reverse"></i>
+                            Performer
+                        </th>
+
+                        <th></th>
+                    </tr>
+                    <tr ng-repeat="task in vm.project.tasks">
+                        <td>{{task.id}}</td>
+                        <td>{{task.name}}</td>
+                        <td>{{task.status}}</td>
+                        <td>{{task.createdDate | date:'yyyy-MM-dd HH:mm'}}</td>
+                        <td>{{task.priority}}</td>
+                        <td>{{task.createdBy.username}}</td>
+                        <td>{{task.performer.username}}</td>
+                        <td>
+                            <button class="btn btn-warning btn-xs glyphicon glyphicon-pencil"
+                                    data-ng-click="vm.modalEditTaskOpen(task.id)"></button>
+                            <button class="btn btn-danger btn-xs glyphicon glyphicon-remove"
+                                    data-ng-click="vm.deleteTask(task.id)"></button>
+
+                            <i ng-show="task.countFiles > 0"
+                               class="glyphicon glyphicon-paperclip">{{task.countFiles}}</i>
+                            <i ng-show="task.countComments > 0"
+                               class="glyphicon glyphicon-envelope">{{task.countComments}}</i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="8">
+
+                            <div class="pull-left">
+                                <button class="btn btn-success btn-sm"
+                                        data-ng-click="vm.addTask()">Add task
+                                </button>
+                            </div>
+
+                            <div class="pull-right">
+                                <span class="btn btn-warning btn-sm"> Todo  {{project.todo}}</span>
+                                <span class="btn btn-primary btn-sm"> Doing  {{project.doing}}</span>
+                                <span class="btn btn-success btn-sm"> Done  {{project.done}} </span>
+                            </div>
+
+                            <div class="text-center">
+                                <div style="">
+
+                                    <button class="btn btn-default btn-sm"
+                                            ng-click="vm.prev()"> Previos
+                                    </button>
+                                    Total {{vm.page + 1}}/{{vm.pageLength + 1}}
+
+                                    <button class="btn btn-default btn-sm"
+                                            ng-click="vm.next()">Next
+                                    </button>
+
+                                </div>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                </table>
+            </td>
+        </tr>
+        <tr ng-repeat-end>
+        </tr>
+        </tbody>
+    </table>
+
+    <p>Page {{vm.page + 1}} from {{vm.pageLength + 1}}</p>
+    <ul class="pager">
+        <li class="previous" ng-click="vm.previous(true)"
+            ng-class="{'disabled': vm.page == 0}">
+            <a href="#"><i class="fa fa-chevron-left"></i><i class="fa fa-chevron-left"></i> First page</a>
+        </li>
+        <li class="previous" ng-click="vm.previous()"
+            ng-class="{'disabled': vm.page == 0}">
+            <a href="#"><i class="fa fa-chevron-left"></i> Previous page</a>
+        </li>
+
+
+        <li ng-click="vm.page = vm.page -2; vm.getAll();" ng-show="(vm.page -1)> 0">
+            <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page -1}}</a>
+        </li>
+        <li ng-click="vm.page = vm.page -1; vm.getAll();" ng-show="(vm.page -0) > 0">
+            <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page }}</a>
+        </li>
+        <li class="disabled">
+            <a style="color:red" href="#"><i class="fa fa-chevron-left"></i> {{vm.page + 1}}</a>
+        </li>
+        <li ng-click="vm.page = vm.page + 1 ; vm.getAll();" ng-show="(vm.page +1) < vm.pageLength + 1">
+            <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page + 2}} </a>
+        </li>
+        <li ng-click="vm.page = vm.page + 2; vm.getAll();" ng-show="(vm.page +2) < vm.pageLength + 1">
+            <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page + 3}} </a>
+        </li>
+
+
+        <li class="next" ng-click="vm.next(true)" ng-class="{'disabled' : vm.pageLength <= vm.page}">
+            <a href="#">Last page <i class="fa fa-chevron-right"></i><i class="fa fa-chevron-right"></i></a>
+        </li>
+        <li class="next" ng-click="vm.next()" ng-class="{'disabled' : vm.pageLength <= vm.page}">
+            <a href="#">Next page <i class="fa fa-chevron-right"></i></a>
+        </li>
+    </ul>
+
+
+</div>
+
+<input type="button" class="btn btn-danger" value="Add project" ng-click="vm.modalAddOpen()"/>
+
+

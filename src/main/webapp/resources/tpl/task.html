@@ -1,0 +1,132 @@
+<div>
+    <section ng-init="vm.getAll()">
+        <div>
+            <div class="form-group">
+                <label for="count">Show by</label>
+                <select id="count" class="form-control" ng-model='vm.count' ng-change="vm.getAll()"
+                        ng-options="value for value in vm.countValues "
+                        convert-to-number>
+                </select>
+            </div>
+            <div ng-hide="vm.tasks.length" class="alert alert-danger">Nothing to be done!</div>
+            <table class="table table-bordered" ng-show="vm.tasks.length">
+                <tr>
+                    <th ng-click="vm.field='id'; vm.reverse = !vm.reverse; vm.getAll()">
+                        <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'id')"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-down "
+                           ng-show="(vm.field == 'id') && !vm.reverse"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-up "
+                           ng-show="(vm.field == 'id') && vm.reverse"></i>
+                        Id
+                    </th>
+                    <th ng-click="vm.field='name'; vm.reverse = !vm.reverse; vm.getAll()">
+                        <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'name')"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-down"
+                           ng-show="(vm.field == 'name') && !vm.reverse"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-up"
+                           ng-show="(vm.field == 'name') && vm.reverse"></i>
+                        Name
+                    </th>
+                    <th ng-click="vm.field='status'; vm.reverse = !vm.reverse; vm.getAll()">
+                        <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'status')"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-down"
+                           ng-show="(vm.field == 'status') && !vm.reverse"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-up"
+                           ng-show="(vm.field == 'status') && vm.reverse"></i>
+                        Status
+                    </th>
+                    <th ng-click="vm.field='createdDate'; vm.reverse = !vm.reverse; vm.getAll()">
+                        <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'createdDate')"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-down"
+                           ng-show="(vm.field == 'createdDate') && !vm.reverse"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-up"
+                           ng-show="(vm.field == 'createdDate') && vm.reverse"></i>
+                        Created date
+                    </th>
+                    <th ng-click="vm.field='priority'; vm.reverse = !vm.reverse; vm.getAll()">
+                        <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'priority')"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-down"
+                           ng-show="(vm.field == 'priority') && !vm.reverse"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-up"
+                           ng-show="(vm.field == 'priority') && vm.reverse"></i>
+                        Priority
+                    </th>
+                    <th ng-click="vm.field='createdBy.username'; vm.reverse = !vm.reverse; vm.getAll()">
+                        <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'createdBy.username')"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-down"
+                           ng-show="(vm.field == 'createdBy.username') && !vm.reverse"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-up"
+                           ng-show="(vm.field == 'createdBy.username') && vm.reverse"></i>
+                        Created
+                    </th>
+                    <th ng-click="vm.field='performer.username'; vm.reverse = !vm.reverse; vm.getAll()">
+                        <i class="glyphicon glyphicon-sort" ng-show="(vm.field != 'performer.username')"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-down"
+                           ng-show="(vm.field == 'performer.username') && !vm.reverse"></i>
+                        <i style="color:red" class="glyphicon glyphicon-chevron-up"
+                           ng-show="(vm.field == 'performer.username') && vm.reverse"></i>
+                        Performer
+                    </th>
+
+                    <th></th>
+                </tr>
+                <tr ng-repeat="task in vm.tasks">
+                    <td>{{task.id}}</td>
+                    <td>{{task.name}} </td>
+                    <td>{{task.status}}</td>
+                    <td>{{task.createdDate | date:'yyyy-MM-dd HH:mm'}}</td>
+                    <td>{{task.priority}}</td>
+                    <td>{{task.createdBy.username}}</td>
+                    <td>{{task.performer.username}}</td>
+                    <td>
+                        <button class="btn btn-warning btn-xs glyphicon glyphicon-pencil"
+                                data-ng-click="vm.modalEditTaskOpen(task.id)"></button>
+                        <button class="btn btn-danger btn-xs glyphicon glyphicon-remove"
+                                data-ng-click="vm.deleteTask(task.id)"></button>
+
+                        <i ng-show="task.countFiles > 0" class="glyphicon glyphicon-paperclip">{{task.countFiles}}</i>
+                        <i ng-show="task.countComments > 0"
+                           class="glyphicon glyphicon-envelope">{{task.countComments}}</i>
+                    </td>
+                </tr>
+            </table>
+            <p>Page {{vm.page + 1}} from {{vm.pageLength + 1}}</p>
+            <ul class="pager">
+                <li class="previous" ng-click="vm.previous(true)"
+                    ng-class="{'disabled': vm.page == 0}">
+                    <a href="#"><i class="fa fa-chevron-left"></i><i class="fa fa-chevron-left"></i> First page</a>
+                </li>
+                <li class="previous" ng-click="vm.previous()"
+                    ng-class="{'disabled': vm.page == 0}">
+                    <a href="#"><i class="fa fa-chevron-left"></i> Previous page</a>
+                </li>
+
+                <li ng-click="vm.page = vm.page -2; vm.getAll();" ng-show="(vm.page -1)> 0">
+                    <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page -1}}</a>
+                </li>
+                <li ng-click="vm.page = vm.page -1; vm.getAll();" ng-show="(vm.page -0) > 0">
+                    <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page }}</a>
+                </li>
+                <li class="disabled">
+                    <a style="color:red" href="#"><i class="fa fa-chevron-left"></i> {{vm.page + 1}}</a>
+                </li>
+                <li ng-click="vm.page = vm.page + 1 ; vm.getAll();" ng-show="(vm.page +1) < vm.pageLength + 1">
+                    <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page + 2}} </a>
+                </li>
+                <li ng-click="vm.page = vm.page + 2; vm.getAll();" ng-show="(vm.page +2) < vm.pageLength + 1">
+                    <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page + 3}} </a>
+                </li>
+
+                <li class="next" ng-click="vm.next(true)" ng-class="{'disabled' : vm.pageLength <= vm.page}">
+                    <a href="#">Last page <i class="fa fa-chevron-right"></i><i class="fa fa-chevron-right"></i></a>
+                </li>
+                <li class="next" ng-click="vm.next()" ng-class="{'disabled' : vm.pageLength <= vm.page}">
+                    <a href="#">Next page <i class="fa fa-chevron-right"></i></a>
+                </li>
+            </ul>
+        </div>
+    </section>
+    <!--<input type="button" class="btn btn-danger" value="Add task" ng-click="vm.addTask()"/>-->
+
+
+</div>
