@@ -17,13 +17,37 @@ public class UserRole {
 
     @Id
     @GeneratedValue
-    public int id;
+    private int id;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    public User user;
+    private User user;
 
-    public String role;
+    private String role;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -43,4 +67,7 @@ public class UserRole {
         result = 31 * result + (role != null ? role.hashCode() : 0);
         return result;
     }
+
+
+
 }

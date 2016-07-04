@@ -3,6 +3,8 @@ package com.springtest.service;
 
 import com.springtest.model.entity.User;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
 public interface UserService {
@@ -18,6 +20,8 @@ public interface UserService {
     List<User> getActiveUsers();
 
     List<User> getUsersLikeUsername(String username);
+
+    void authWithVk (String code) throws IOException;
 
 
 }

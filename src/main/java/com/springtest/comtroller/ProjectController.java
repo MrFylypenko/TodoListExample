@@ -1,4 +1,4 @@
-package com.springtest.mvc;
+package com.springtest.comtroller;
 
 
 import com.springtest.model.entity.Project;

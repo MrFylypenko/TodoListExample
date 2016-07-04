@@ -1,6 +1,8 @@
-package com.springtest.mvc;
+package com.springtest.comtroller;
 
 import com.springtest.model.entity.User;
+import com.springtest.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +19,11 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 @RequestMapping("/")
 public class HelloController {
+
+
+    @Autowired
+    UserService userService;
+
 
     @RequestMapping(method = RequestMethod.GET)
     public String index() {
@@ -114,10 +121,22 @@ public class HelloController {
             return new User();
         }
 
-
         response.setStatus(200);
         return user;
     }
+
+
+
+    @RequestMapping(value = "/vk", method = RequestMethod.GET, params = {"code"})
+    public String vk (@RequestParam(value = "code") String code, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        userService.authWithVk(code);
+
+        return "index";
+    }
+
+
+
 
 }
 

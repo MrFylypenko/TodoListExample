@@ -65,7 +65,7 @@ public class User implements UserDetails {
 
         Set<GrantedAuthority> setAuths = new HashSet<GrantedAuthority>();
         for (UserRole userRole : roles) {
-            setAuths.add(new SimpleGrantedAuthority(userRole.role));
+            setAuths.add(new SimpleGrantedAuthority(userRole.getRole()));
         }
 
         List<GrantedAuthority> result = new ArrayList<GrantedAuthority>(
@@ -86,7 +86,6 @@ public class User implements UserDetails {
         if (password != null ? !password.equals(user.password) : user.password != null) return false;
         if (firstName != null ? !firstName.equals(user.firstName) : user.firstName != null) return false;
         return !(lastName != null ? !lastName.equals(user.lastName) : user.lastName != null);
-
     }
 
     @Override

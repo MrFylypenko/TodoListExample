@@ -1,4 +1,4 @@
-package com.springtest.mvc;
+package com.springtest.comtroller;
 
 import org.junit.Before;
 import org.junit.Test;
