@@ -62,7 +62,7 @@
                 {{project.createdDate | date:'yyyy-MM-dd HH:mm'}}
             </td>
             <td>
-                {{project.createdBy.username}}
+                {{project.createdBy.firstName}} {{project.createdBy.lastName}}
             </td>
             <td>
                 <button type="button " class="btn btn-xs" ng-click="vm.toggleTasks(project)">

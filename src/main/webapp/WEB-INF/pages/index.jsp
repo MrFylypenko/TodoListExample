@@ -56,7 +56,6 @@
     <script src="resources/js/service/TaskService.js"></script>
 
 
-
     <script src="resources/js/factory/CommentFactory.js"></script>
     <script src="resources/js/factory/TaskFactory.js"></script>
     <script src="resources/js/factory/ProjectFactory.js"></script>
@@ -78,7 +77,8 @@
             <ul class="nav navbar-nav">
                 <li role="presentation" ng-class="{'active': param == '/mytasks' }"><a href="mytasks">MyTasks</a></li>
                 <li role="presentation" ng-class="{'active': param == '/task' }"><a href="task">Tasks</a></li>
-                <li role="presentation" ng-class="{'active': param == '/projects' }"><a href="projects">Projects</a></li>
+                <li role="presentation" ng-class="{'active': param == '/projects' }"><a href="projects">Projects</a>
+                </li>
                 <li role="presentation" ng-class="{'active': param == '/hello' } "><a href="hello">Hello</a></li>
                 <li role="presentation" ng-class="{'active': param == '/about' }"><a href="about">About</a></li>
 
@@ -92,7 +92,11 @@
                 <p ng-show="globals.currentUser.username" class="navbar-text">You logged as</p>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">{{globals.currentUser.firstName}} {{globals.currentUser.lastName}}<span class="caret"></span></a>
+                       aria-expanded="false" style="position: relative; margin-left: 30px">
+                        <img src="{{globals.currentUser.imageUrl}}"  ng-if="globals.currentUser.imageUrl"
+                             style="height: 30px; width: 30px; position: absolute; left: -25px; top: 10px;">
+                        {{globals.currentUser.firstName}} {{globals.currentUser.lastName}}<span
+                            class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="#">Profile (нет)</a></li>
                         <li><a href="#">Settings (нет)</a></li>
@@ -113,7 +117,7 @@
 <div class="well" data-ng-view></div>
 
 
-<div  class="">
+<div class="">
 
     <div class=" well" align="center">&copy; 2016 Todolist</div>
 </div>

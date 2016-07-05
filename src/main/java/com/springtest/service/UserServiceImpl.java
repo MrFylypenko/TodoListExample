@@ -3,8 +3,12 @@ package com.springtest.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.springtest.dao.AuthDao;
 import com.springtest.dao.UserDao;
 import com.springtest.dao.UserRoleDao;
+import com.springtest.model.auth.AuthUser;
+import com.springtest.model.auth.AuthorityType;
+import com.springtest.model.auth.VkAuthUser;
 import com.springtest.model.entity.User;
 import com.springtest.model.entity.UserRole;
 import com.springtest.settings.HibernateAwareObjectMapper;
@@ -19,7 +23,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import javax.net.ssl.HttpsURLConnection;
+import javax.persistence.NoResultException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,123 +36,156 @@ import java.util.*;
 @Service
 public class UserServiceImpl implements UserService {
 
-	private final String USER_AGENT = "Mozilla/5.0";
-	private String redirect_uri = "http://192.168.50.124:8080/vk";
+    private final String USER_AGENT = "Mozilla/5.0";
+    private String redirect_uri = "http://192.168.50.124:8080/vk";
+
+    @Autowired
+    UserDao userDao;
+
+    @Autowired
+    UserRoleDao userRoleDao;
+
+    @Autowired
+    AuthDao authDao;
+
+    @Resource(name="sessionRegistry")
+    private SessionRegistry sessionRegistry;
+
+    @Override
+    public List<User> getAllUsers() {
+        return userDao.getAllUsers();
+    }
+
+    @Override
+    @Transactional
+    public void addUser(User user) {
+        UserRole userRole = new UserRole();
+        userRole.setRole("ROLE_USER");
+        userDao.addUser(user);
+        userRole.setUser(user);
+        userRoleDao.addUserRole(userRole);
+    }
+
+    @Override
+    @Transactional
+    public User findByUserName(String username) {
+        return userDao.findByUserName(username);
+    }
+
+    @Override
+    public String encode(String pass) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String result = encoder.encode(pass);
+        return result;
+    }
+
+    @Override
+    public List<User> getActiveUsers() {
+        final List<Object> allPrincipals = sessionRegistry.getAllPrincipals();
+        List<User> users = new ArrayList<User>();
+
+        System.out.println("size = " + allPrincipals.size());
+
+        for (final Object principal : allPrincipals) {
+            //if (principal instanceof User) {
+                final User user = (User) principal;
+                users.add(user);
+            //}
+        }
+
+        return users;
+    }
+
+    @Override
+    public List<User> getUsersLikeUsername(String username) {
+        return userDao.getUsersLikeUsername(username);
+    }
 
 
-	@Autowired
-	UserDao userDao;
+    @Transactional
+    @Override
+    public void authWithVk(String code) throws IOException {
 
-	@Autowired
-	UserRoleDao userRoleDao;
+        String url = "https://oauth.vk.com/access_token?client_id=5181063&client_secret=sDAvKlcVb54De5ffT9ho&redirect_uri="
+                + redirect_uri + "&code=" + code;
 
-	@Autowired
-	private SessionRegistry sessionRegistry;
+        String response = sendQueryByUrl(url);
 
-	@Override
-	public List<User> getAllUsers() {
-		return userDao.getAllUsers();
-	}
+        ObjectMapper mapper = new HibernateAwareObjectMapper();
+        JsonNode jsonObj = mapper.readTree(response);
+        final String vkId = jsonObj.path("user_id").asText();
+        String accessToken = jsonObj.path("access_token").asText();
 
-	@Override
-	@Transactional
-	public void addUser(User user) {
-		UserRole userRole = new UserRole();
-		userRole.setRole("ROLE_USER");
-		userDao.addUser(user);
-		userRole.setUser(user);
-		userRoleDao.addUserRole(userRole);
-	}
+        VkAuthUser authUser = authDao.getVkAuthUserByVkId(vkId);
 
-	@Override
-	@Transactional
-	public User findByUserName(String username) {
-		return userDao.findByUserName(username);
-	}
+        if (authUser == null) {
 
-	@Override
-	public String encode(String pass) {
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		String result = encoder.encode(pass);
-		return result;
-	}
-
-	@Override
-	public List<User> getActiveUsers() {
-		final List<Object> allPrincipals = sessionRegistry.getAllPrincipals();
-		List<User> users = new ArrayList<User>();
-
-		for(final Object principal : allPrincipals) {
-			if(principal instanceof User) {
-				final User user = (User) principal;
-				users.add(user);
-			}
-		}
-
-		return users;
-	}
-
-	@Override
-	public List<User> getUsersLikeUsername(String username) {
-		return userDao.getUsersLikeUsername(username);
-	}
+            User user = new User();
+            user.setUsername(vkId);
+            //user.setPassword("ddddd");
 
 
+            response = sendQueryByUrl("https://api.vk.com/method/getProfiles?uid=" +
+                    vkId + "&access_token=" + accessToken + "&fields=photo_200,city,verified,country");
+
+            jsonObj = mapper.readTree(response).path("response");
+
+            user.setFirstName(jsonObj.get(0).path("first_name").asText());
+            user.setLastName(jsonObj.get(0).path("last_name").asText());
+            user.setImageUrl(jsonObj.get(0).path("photo_200").asText());
 
 
-	@Override
-	public void authWithVk(String code) throws IOException {
+            userDao.addUser(user);
 
-		String url = "https://oauth.vk.com/access_token?client_id=5181063&client_secret=sDAvKlcVb54De5ffT9ho&redirect_uri="
-				+ redirect_uri + "&code=" + code ;
+            UserRole userRole = new UserRole();
+            userRole.setRole("ROLE_USER");
+            userRole.setUser(user);
 
-		URL obj = new URL(url);
-		HttpsURLConnection con= (HttpsURLConnection) obj.openConnection();
-		con.setRequestProperty("User-Agent", USER_AGENT);
+            userRoleDao.addUserRole(userRole);
 
-		BufferedReader in = new BufferedReader(
-				new InputStreamReader(con.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
+            Set<UserRole> userRoles = new HashSet<UserRole>();
+            userRoles.add(userRole);
+            user.setRoles(userRoles);
 
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
+            authUser = new VkAuthUser();
+            authUser.setUser(user);
+            authUser.setType(AuthorityType.VK);
+            authUser.setVkId(vkId);
+            authUser.setAccessToken(accessToken);
 
-		ObjectMapper mapper = new HibernateAwareObjectMapper();
-
-
-		JsonNode jsonObj = mapper.readTree(response.toString());
-
-		//ObjectNode jsonObj = new ObjectNode (response.toString());
-
-		  //jsonObj = new JSONObject(response.toString());
-
-		final String userId = jsonObj.path("user_id").asText();
-		String token = jsonObj.path("access_token").asText();
+            authDao.saveAuth(authUser);
+        }
 
 
-		User user = null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		if (user == null) {
-			user = new User();
-			user.setUsername(userId);
-			user.setPassword("ddddd");
+        authUser.setDetails(authentication.getDetails());
 
-			Set<UserRole> userRoles = new HashSet<UserRole>();
-			UserRole userRole = new UserRole();
-			userRole.setRole("ROLE_USER");
-			userRoles.add(userRole);
-		}
-
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		Authentication trustedAuthentication = new UserAuthentication(user, authentication.getDetails());
-
-		SecurityContextHolder.getContext().setAuthentication(trustedAuthentication);
+        SecurityContextHolder.getContext().setAuthentication(authUser);
 
 
-	}
+    }
+
+
+    private String sendQueryByUrl(String url) throws IOException {
+
+        URL obj = new URL(url);
+        HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+        con.setRequestProperty("User-Agent", USER_AGENT);
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        return response.toString();
+
+    }
+
 
 }

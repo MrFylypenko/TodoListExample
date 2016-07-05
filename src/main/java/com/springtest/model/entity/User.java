@@ -3,6 +3,7 @@ package com.springtest.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.springtest.model.auth.AuthUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,6 +40,12 @@ public class User implements UserDetails {
     private String firstName;
 
     private String lastName;
+
+    private String imageUrl;
+
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Set<AuthUser> authUsers = new HashSet<AuthUser>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<UserRole> roles = new HashSet<UserRole>();
@@ -159,7 +166,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return String.valueOf(id);
     }
 
     @Override
@@ -225,5 +232,22 @@ public class User implements UserDetails {
 
     public void setProjects(Set<Project> projects) {
         this.projects = projects;
+    }
+
+    @JsonIgnore
+    public Set<AuthUser> getAuthUsers() {
+        return authUsers;
+    }
+
+    public void setAuthUsers(Set<AuthUser> authUsers) {
+        this.authUsers = authUsers;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

@@ -2,9 +2,11 @@ package com.springtest.comtroller;
 
 
 import com.springtest.model.entity.Project;
+import com.springtest.model.entity.User;
 import com.springtest.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -42,6 +44,8 @@ public class ProjectController {
     @RequestMapping(value = "rest", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.CREATED)
     public void saveProject(@RequestBody Project project) {
+        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        project.setCreatedBy(user);
         projectService.saveProject(project);
     }
 

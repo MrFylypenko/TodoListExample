@@ -13,6 +13,13 @@
         <class>com.springtest.model.entity.File</class>
         <class>com.springtest.model.entity.FileData</class>
         <class>com.springtest.model.entity.Project</class>
+
+
+        <class>com.springtest.model.auth.AuthUser</class>
+        <class>com.springtest.model.auth.VkAuthUser</class>
+        <class>com.springtest.model.auth.LocalAuthUser</class>
+
+
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.connection.characterEncoding"
@@ -27,8 +34,8 @@
 
             <property name="hibernate.hbm2ddl.auto" value="update"/>
 
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="true"/>
+            <!--<property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>-->
 
             <property name="hibernate.c3p0.acquire_increment" value="3"/>
             <property name="hibernate.c3p0.idle_test_period" value="14400"/>
