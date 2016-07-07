@@ -76,8 +76,8 @@
                     <td>{{task.status}}</td>
                     <td>{{task.createdDate | date:'yyyy-MM-dd HH:mm'}}</td>
                     <td>{{task.priority}}</td>
-                    <td>{{task.createdBy.username}}</td>
-                    <td>{{task.performer.username}}</td>
+                    <td>{{task.createdBy.firstName}} {{task.createdBy.lastName}}</td>
+                    <td>{{task.performer.firstName}} {{task.performer.lastName}}</td>
                     <td>
                         <button class="btn btn-warning btn-xs glyphicon glyphicon-pencil"
                                 data-ng-click="vm.modalEditTaskOpen(task.id)"></button>

@@ -18,7 +18,7 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
-    <mvc:resources mapping="/resources/**" location="/resources/"/>
+    <mvc:resources mapping="/resources/**" location="/resources/" order="-1"/>
 
 
     <!-- Enables the Spring Annotation programming model -->
@@ -40,12 +40,8 @@
     <bean id="multipartResolver"  class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
 
 
-
-
-
-
     <import resource="spring/data.xml"/>
-    <import resource="spring/spring-security.xml"/>
+    <!--<import resource="spring/spring-security.xml"/>-->
 
 
 </beans>

@@ -1,0 +1,65 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xmlns:p="http://www.springframework.org/schema/mvc"
+             xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+    <http auto-config="false" entry-point-ref="authenticationProcessingFilterEntryPoint">
+
+        <custom-filter after="FORM_LOGIN_FILTER" ref="usernamePasswordFilter"/>
+
+        <session-management session-authentication-strategy-ref="sas"/>
+        <!-- Конфигурация выхода обыкновенная -->
+        <logout delete-cookies="JSESSIONID" logout-url="/logout"/>
+    </http>
+
+    <!-- Конфигурируем точку входа в приложение -->
+    <beans:bean id="authenticationProcessingFilterEntryPoint"
+                class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <beans:property name="loginFormUrl" value="/login"/>
+        <beans:property name="forceHttps" value="false"/>
+    </beans:bean>
+
+    <!-- Конфигурируем реестр сессий -->
+    <beans:bean id="sessionRegistry"
+                class="org.springframework.security.core.session.SessionRegistryImpl"/>
+
+
+    <beans:bean id="sas" class=
+            "org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy">
+        <beans:constructor-arg ref="sessionRegistry"/>
+        <beans:property name="maximumSessions" value="-1"/>
+    </beans:bean>
+
+
+    <beans:bean id="usernamePasswordFilter" class=
+            "org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+        <beans:property name="sessionAuthenticationStrategy" ref="sas"/>
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="authenticationFailureHandler" ref="loginFailureHandler"/>
+        <beans:property name="authenticationSuccessHandler" ref="loginSuccessHandler"/>
+    </beans:bean>
+
+
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider user-service-ref='userDetailsService'>
+            <password-encoder hash="plaintext"/>
+        </authentication-provider>
+    </authentication-manager>
+
+
+    <beans:bean id="loginSuccessHandler"
+                class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+        <beans:property name="defaultTargetUrl" value="/"/>
+    </beans:bean>
+
+    <beans:bean id="loginFailureHandler"
+                class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+        <beans:property name="defaultFailureUrl" value="/login?error=true"/>
+    </beans:bean>
+
+
+</beans:beans>

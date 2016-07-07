@@ -8,10 +8,10 @@ app.service('AuthenticationService', function ($http, $rootScope, $location) {
 
     service.Login = function (username, password, callback) {
 
-        var postData = 'j_username=' + username + '&j_password=' + password;
+        var postData = 'username=' + username + '&password=' + password;
 
         $http({
-            url: 'j_spring_security_check',
+            url: 'login',
             method: "POST",
             data: postData,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}

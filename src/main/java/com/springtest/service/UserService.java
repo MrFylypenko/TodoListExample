@@ -3,6 +3,8 @@ package com.springtest.service;
 
 import com.springtest.model.entity.User;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
@@ -21,7 +23,7 @@ public interface UserService {
 
     List<User> getUsersLikeUsername(String username);
 
-    void authWithVk (String code) throws IOException;
+    void authWithVk(HttpServletRequest request, HttpServletResponse response, String code) throws IOException;
 
 
 }

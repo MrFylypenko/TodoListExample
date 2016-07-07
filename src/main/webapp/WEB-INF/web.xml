@@ -10,14 +10,14 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-
             /WEB-INF/mvc-dispatcher-servlet.xml
-
+            /WEB-INF/spring/data.xml
+            /WEB-INF/spring/spring-security.xml
         </param-value>
     </context-param>
 
     <!-- Creates the Spring Container shared by all Servlets and Filters -->
-    <listener>
+    <listener >
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
@@ -29,7 +29,7 @@
 
 
     <session-config>
-        <session-timeout>480</session-timeout>
+               <session-timeout>100</session-timeout>
     </session-config>
 
     <servlet>

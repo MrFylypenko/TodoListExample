@@ -28,7 +28,7 @@
                                 <textarea id="inputDescriptionEdit" ng-model="vm.editTask.description"
                                           class="form-control" style=" max-width: 100%; "
                                           rows="7"
-                                          ng-disabled="globals.currentUser.username != vm.editTask.createdBy.username"></textarea>
+                                          ng-disabled="globals.currentUser.id != vm.editTask.createdBy.id"></textarea>
             </div>
         </div>
         <div class="form-group">
@@ -63,14 +63,18 @@
 
             <div class="col-sm-10">
                 <ui-select ng-model="vm.editTask.performer" id="inputPerformerEdit"
-                           ng-disabled="globals.currentUser.username != vm.editTask.createdBy.username">
-                    <ui-select-match placeholder="SELECT BALBANANA">{{$select.selected.username}}
+                           ng-disabled="globals.currentUser.id != vm.editTask.createdBy.id">
+                    <ui-select-match placeholder="SELECT USER">{{$select.selected.firstName}} {{$select.selected.lastName}}
                     </ui-select-match>
+
+
                     <ui-select-choices repeat="item in vm.users | filter: $select.search track by item.id"
                                        refresh="vm.getUsers($select.search)"
                                        refresh-delay="3">
                         <span ng-bind="item.username"></span>
                     </ui-select-choices>
+
+
                 </ui-select>
             </div>
         </div>
@@ -79,7 +83,7 @@
             <label for="inputCreatedByEdit" class="col-sm-2 control-label">Created By</label>
 
             <div class="col-sm-10">
-                <input type="text" ng-model="vm.editTask.createdBy.username" class="form-control"
+                <input type="text" value="{{vm.editTask.createdBy.firstName}} {{vm.editTask.createdBy.lastName}}" class="form-control"
                        id="inputCreatedByEdit"
                        placeholder="Name" ng-disabled="true">
             </div>

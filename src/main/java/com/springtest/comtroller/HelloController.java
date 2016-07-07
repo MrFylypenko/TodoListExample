@@ -3,6 +3,7 @@ package com.springtest.comtroller;
 import com.springtest.model.entity.User;
 import com.springtest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,18 +25,18 @@ public class HelloController {
     @Autowired
     UserService userService;
 
-
-    @RequestMapping(method = RequestMethod.GET)
+    @Order(2)
+    @RequestMapping(value = "/**",method = RequestMethod.GET)
     public String index() {
         return "index";
     }
 
-    @RequestMapping(value = "hello", method = RequestMethod.GET)
+   /* @RequestMapping(value = "hello", method = RequestMethod.GET)
     public String printWelcome() {
         return "hello";
     }
 
-    @RequestMapping(value = "file/**", method = RequestMethod.GET)
+    @RequestMapping(value = "file*", method = RequestMethod.GET)
     public String file() {
         return "index";
     }
@@ -63,8 +64,7 @@ public class HelloController {
     @RequestMapping(value = "projects", method = RequestMethod.GET)
     public String myProjects() {
         return "index";
-    }
-
+    }*/
 
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -105,6 +105,7 @@ public class HelloController {
     @ResponseBody
     public Object login2(HttpServletRequest request, HttpServletResponse response) {
 
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         final String name = auth.getName();
@@ -112,7 +113,7 @@ public class HelloController {
 
         try {
             user = (User) auth.getPrincipal();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Ошибка, когда юзер не авторизирован, все нормально!"); //todo
         }
 
@@ -126,16 +127,14 @@ public class HelloController {
     }
 
 
-
     @RequestMapping(value = "/vk", method = RequestMethod.GET, params = {"code"})
-    public String vk (@RequestParam(value = "code") String code, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public String vk(@RequestParam(value = "code") String code, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        userService.authWithVk(code);
+
+        userService.authWithVk(request, response, code);
 
         return "index";
     }
-
-
 
 
 }

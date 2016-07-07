@@ -2,34 +2,31 @@ package com.springtest.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.springtest.dao.AuthDao;
 import com.springtest.dao.UserDao;
 import com.springtest.dao.UserRoleDao;
-import com.springtest.model.auth.AuthUser;
 import com.springtest.model.auth.AuthorityType;
 import com.springtest.model.auth.VkAuthUser;
 import com.springtest.model.entity.User;
 import com.springtest.model.entity.UserRole;
 import com.springtest.settings.HibernateAwareObjectMapper;
-import com.springtest.settings.UserAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import javax.net.ssl.HttpsURLConnection;
-import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -48,7 +45,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     AuthDao authDao;
 
-    @Resource(name="sessionRegistry")
+    @Autowired
+    @Qualifier("sas")
+    CompositeSessionAuthenticationStrategy concurrentSessionControlStrategy;
+
+
+    @Autowired
+    @Qualifier("sessionRegistry")
     private SessionRegistry sessionRegistry;
 
     @Override
@@ -83,14 +86,11 @@ public class UserServiceImpl implements UserService {
     public List<User> getActiveUsers() {
         final List<Object> allPrincipals = sessionRegistry.getAllPrincipals();
         List<User> users = new ArrayList<User>();
+        System.out.println("allPrincipals.size = " + allPrincipals.size());
 
-        System.out.println("size = " + allPrincipals.size());
-
-        for (final Object principal : allPrincipals) {
-            //if (principal instanceof User) {
-                final User user = (User) principal;
-                users.add(user);
-            //}
+        for (final Object principal : sessionRegistry.getAllPrincipals()) {
+            final User user = (User) principal;
+            users.add(user);
         }
 
         return users;
@@ -104,15 +104,15 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void authWithVk(String code) throws IOException {
+    public void authWithVk(HttpServletRequest request, HttpServletResponse response, String code) throws IOException {
 
         String url = "https://oauth.vk.com/access_token?client_id=5181063&client_secret=sDAvKlcVb54De5ffT9ho&redirect_uri="
                 + redirect_uri + "&code=" + code;
 
-        String response = sendQueryByUrl(url);
+        String result = sendQueryByUrl(url);
 
         ObjectMapper mapper = new HibernateAwareObjectMapper();
-        JsonNode jsonObj = mapper.readTree(response);
+        JsonNode jsonObj = mapper.readTree(result);
         final String vkId = jsonObj.path("user_id").asText();
         String accessToken = jsonObj.path("access_token").asText();
 
@@ -122,13 +122,11 @@ public class UserServiceImpl implements UserService {
 
             User user = new User();
             user.setUsername(vkId);
-            //user.setPassword("ddddd");
 
-
-            response = sendQueryByUrl("https://api.vk.com/method/getProfiles?uid=" +
+            result = sendQueryByUrl("https://api.vk.com/method/getProfiles?uid=" +
                     vkId + "&access_token=" + accessToken + "&fields=photo_200,city,verified,country");
 
-            jsonObj = mapper.readTree(response).path("response");
+            jsonObj = mapper.readTree(result).path("response");
 
             user.setFirstName(jsonObj.get(0).path("first_name").asText());
             user.setLastName(jsonObj.get(0).path("last_name").asText());
@@ -156,12 +154,17 @@ public class UserServiceImpl implements UserService {
             authDao.saveAuth(authUser);
         }
 
+        //if token changed
+        authUser.setAccessToken(accessToken);
+
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         authUser.setDetails(authentication.getDetails());
 
         SecurityContextHolder.getContext().setAuthentication(authUser);
+
+        concurrentSessionControlStrategy.onAuthentication(authUser, request, response);
 
 
     }
