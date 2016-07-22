@@ -27,9 +27,9 @@
 
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
 
-            <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/test" />
-            <property name="hibernate.connection.username" value="root" />
-            <property name="hibernate.connection.password" value="" />
+            <property name="hibernate.connection.url" value="jdbc:mysql://192.168.50.76:3306/vano_spring_security" />
+            <property name="hibernate.connection.username" value="external" />
+            <property name="hibernate.connection.password" value="y3l0l3k0r" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
 
             <property name="hibernate.hbm2ddl.auto" value="update"/>

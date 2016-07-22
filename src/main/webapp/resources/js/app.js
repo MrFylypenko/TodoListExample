@@ -31,18 +31,36 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $resource
         })
         .when('/projects', {
             controller: 'ProjectController',
-            templateUrl: 'resources/tpl/projects.html'
+            templateUrl: 'resources/tpl/projects.html',
+            resolve: {
+                projects: function ($location, $routeParams, $q, ProjectFactory) {
+                    var params = {
+                        count: 10,
+                        page: 0,
+                        field: 'name',
+                        direction: "asc"
+
+                    };
+
+                    var defer = $q.defer();
+                    ProjectFactory.query(params, function (response) {
+                        defer.resolve(response);
+                    });
+                    return defer.promise;
+                }
+            }
+
         })
         .when('/task', {
             controller: 'TaskController',
             templateUrl: 'resources/tpl/task.html',
             resolve: {
-                tasks: function ($q, TaskFactory) {
+                tasks: function ($location, $routeParams, $q, TaskFactory) {
                     var params = {
                         count: 10,
                         from: 0,
                         field: 'name',
-                        direction: "asc"
+                        direction: "desc"
                     };
 
                     var defer = $q.defer();

@@ -1,10 +1,9 @@
 /**
  * Created by vano on 25.03.16.
  */
-app.controller('ProjectController', function ($scope, $location, $rootScope, ProjectFactory, $uibModal) {
+app.controller('ProjectController', function ($scope, $location, $rootScope, ProjectFactory, $uibModal, projects) {
     $rootScope.param = $location.path();
     var vm = $scope.vm = this;
-
 
     vm.toggleTasks = function (project) {
         project.show = !project.show;
@@ -97,15 +96,18 @@ app.controller('ProjectController', function ($scope, $location, $rootScope, Pro
     vm.from = 0;
     vm.reverse = true;
     vm.field = 'name';
+    vm.total = 0;
+
+    vm.projects = projects.list;
+    vm.total = projects.total;
+    vm.pageLength = Math.ceil(projects.total / 10) - 1;
 
 
     //TODO search
     vm.getAll = function () {
-
         if (vm.page * vm.count > vm.total) {
             vm.page = 0;
-        }
-        ;
+        };
 
         var params = {
             count: vm.count,
@@ -120,7 +122,5 @@ app.controller('ProjectController', function ($scope, $location, $rootScope, Pro
             vm.total = response.total;
         });
     };
-
-    vm.getAll();
 
 });

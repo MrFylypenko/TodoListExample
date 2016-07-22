@@ -1,12 +1,8 @@
 /**
  * Created by Vano on 23.02.2016.
  */
-app.controller('TaskController', function ($location, $rootScope, $scope, $http, TaskFactory, FileUploadService, tasks, $route, $uibModal, $log) {
-    console.log($route);
-
+app.controller('TaskController', function ($location, $routeParams, $rootScope, $scope, $http, TaskFactory, FileUploadService, tasks, $route, $uibModal, $log) {
     var vm = $scope.vm = this;
-
-    vm.tasks = [];
 
     vm.countValues = [2, 5, 10, 20, 50, 100];
     vm.count = 10;
@@ -14,13 +10,11 @@ app.controller('TaskController', function ($location, $rootScope, $scope, $http,
     vm.ready = false;
     vm.field = 'name';
 
-    vm.pageLength = 0;
-
-    vm.total = tasks.total;
+    vm.pageLength = Math.ceil(tasks.total / vm.count) - 1;
     vm.tasks = tasks.list;
+    vm.total = tasks.total;
 
     vm.modalEditTaskOpen = function(id){
-        console.log("open Task");
 
         vm.taskId = id;
         //vm.taskId = 500;
@@ -122,5 +116,4 @@ app.controller('TaskController', function ($location, $rootScope, $scope, $http,
             vm.total = response.total;
         });
     };
-
 });
