@@ -34,7 +34,7 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
 
     private final String USER_AGENT = "Mozilla/5.0";
-    private String redirect_uri = "http://192.168.50.124:8080/vk";
+    private String redirect_uri = "http://tasks.konekon.ru/vk";
 
     @Autowired
     UserDao userDao;
@@ -85,6 +85,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getActiveUsers() {
         final List<Object> allPrincipals = sessionRegistry.getAllPrincipals();
+
+        //sessionRegistry.getAllSessions(allPrincipals.get(0),false).get(0).expireNow();
+
+
         List<User> users = new ArrayList<User>();
         System.out.println("allPrincipals.size = " + allPrincipals.size());
 

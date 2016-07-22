@@ -62,12 +62,12 @@
 
             <div class="col-sm-10">
                 <ui-select ng-model="vm.addTask.performer" id="inputPerformerEdit">
-                    <ui-select-match placeholder="SELECT USER">{{$select.selected.username}}
+                    <ui-select-match placeholder="SELECT USER">{{$select.selected.firstName}} {{$select.selected.lastName}}
                     </ui-select-match>
                     <ui-select-choices repeat="item in vm.users | filter: $select.search track by item.id"
                                        refresh="vm.getUsers($select.search)"
                                        refresh-delay="1">
-                        <span ng-bind="item.username"></span>
+                        <span> {{item.firstName}} {{item.lastName}}</span>
                     </ui-select-choices>
                 </ui-select>
 

@@ -1,5 +1,13 @@
-<div>
-    <section ng-init="vm.getAll()">
+<div  ng-init="vm.getAll()">
+
+
+    <div ng-if="!vm.tasks.length" class="alert alert-danger">Nothing to be done!
+    <br/>
+        Open project and create task in project.
+
+    </div>
+
+    <section ng-if="vm.tasks.length">
         <div>
             <div class="form-group">
                 <label for="count">Show by</label>
@@ -8,7 +16,7 @@
                         convert-to-number>
                 </select>
             </div>
-            <div ng-hide="vm.tasks.length" class="alert alert-danger">Nothing to be done!</div>
+
             <table class="table table-bordered" ng-show="vm.tasks.length">
                 <tr>
                     <th ng-click="vm.field='id'; vm.reverse = !vm.reverse; vm.getAll()">
@@ -72,7 +80,7 @@
                 </tr>
                 <tr ng-repeat="task in vm.tasks">
                     <td>{{task.id}}</td>
-                    <td>{{task.name}} </td>
+                    <td>{{task.name}}</td>
                     <td>{{task.status}}</td>
                     <td>{{task.createdDate | date:'yyyy-MM-dd HH:mm'}}</td>
                     <td>{{task.priority}}</td>
@@ -126,6 +134,11 @@
             </ul>
         </div>
     </section>
+
+
+
+
+
     <!--<input type="button" class="btn btn-danger" value="Add task" ng-click="vm.addTask()"/>-->
 
 

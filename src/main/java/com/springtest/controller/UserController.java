@@ -1,6 +1,5 @@
-package com.springtest.comtroller;
+package com.springtest.controller;
 
-import com.springtest.model.entity.User;
 import com.springtest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,12 +16,6 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    @ResponseBody
-    public Object login2(@RequestBody User user) {
-        userService.addUser(user);
-        return user;
-    }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     @ResponseBody

@@ -33,7 +33,11 @@ public class TaskDaoImpl implements TaskDao {
         Page<Task> page1 = new Page();
 
         //TODO jpql injection attack
-        page1.list = entityManager.createQuery("select t from Task t left join fetch t.createdBy order by t." + field + " " + direction, Task.class)
+        page1.list = entityManager
+                .createQuery("select t from Task t " +
+                        "left join fetch t.createdBy " +
+                        "left join fetch t.performer " +
+                        "order by t." + field + " " + direction, Task.class)
                 .setFirstResult(page)
                 .setMaxResults(count)
                 .getResultList();

@@ -6,14 +6,14 @@ app.service('RegistrationService', function ($http, $rootScope) {
     var service = {};
 
     service.Registrate = function (userData, callback){
-        $http.post('api/user/registration', userData).then(function (response){
+        $http.post('registration', userData).then(function (response){
             callback = response;
         }, function (response){
             callback = response;
         })
     };
 
-    service.Login = function (username, password, callback) {
+    /*service.Login = function (username, password, callback) {
 
         var postData = 'j_username=' + username + '&j_password=' + password;
 
@@ -38,7 +38,7 @@ app.service('RegistrationService', function ($http, $rootScope) {
                 username: username
             }
         }
-    };
+    };*/
 
     service.ClearCredentials = function () {
         $http.get('logout').then(function (data) {

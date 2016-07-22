@@ -7,63 +7,81 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
 
-    <http auto-config="true">
+    <http auto-config="false" use-expressions="true" entry-point-ref="loginUrlAuthenticationEntryPoint">
 
         <csrf disabled="true"/>
 
+        <access-denied-handler error-page="/403"/>
+
         <intercept-url pattern="/" access="permitAll"/>
+        <intercept-url pattern="/api/**" access="hasRole('ROLE_USER')"/>
+        <intercept-url pattern="/file/**" access="hasRole('ROLE_USER')"/>
+        <intercept-url pattern="/secure/**" access="hasRole('ROLE_ADMIN')"/>
 
-
-        <custom-filter position="CONCURRENT_SESSION_FILTER" ref="concurrencyFilter" />
-        <!--<custom-filter position="FORM_LOGIN_FILTER" ref="myAuthFilter" />-->
+        <custom-filter position="CONCURRENT_SESSION_FILTER" ref="concurrencyFilter"/>
+        <custom-filter before="FORM_LOGIN_FILTER" ref="myAuthFilter"/>
+        <custom-filter before="BASIC_AUTH_FILTER" ref="myAuthFilter"/>
 
         <session-management session-authentication-strategy-ref="sas"/>
-
-        <logout delete-cookies="JSESSIONID" logout-url="/logout"/>
+        <logout delete-cookies="JSESSIONID" logout-url="/logout" invalidate-session="true"/>
 
     </http>
 
 
+    <beans:bean id="loginUrlAuthenticationEntryPoint"
+                class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <beans:constructor-arg index="0" value="/401" type="java.lang.String"/>
+        <beans:property name="useForward" value="true"/>
+    </beans:bean>
+
     <beans:bean id="concurrencyFilter"
                 class="org.springframework.security.web.session.ConcurrentSessionFilter">
-        <beans:constructor-arg ref="sessionRegistry"/>
-       <!-- <beans:constructor-arg value="/login"/>-->
+        <beans:constructor-arg index="0" ref="sessionRegistry"/>
+        <beans:constructor-arg index="1" value="/logout" type="java.lang.String"/>
     </beans:bean>
 
 
     <beans:bean id="myAuthFilter" class=
             "org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
-        <beans:property name="sessionAuthenticationStrategy" ref="sas" />
-        <beans:property name="authenticationManager" ref="authenticationManager" />
+        <beans:property name="sessionAuthenticationStrategy" ref="sas"/>
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
         <beans:property name="authenticationFailureHandler" ref="loginFailureHandler"/>
         <beans:property name="authenticationSuccessHandler" ref="loginSuccessHandler"/>
-    </beans:bean>
+        <!--<beans:property name="filterProcessesUrl" value="/"/>-->
 
+    </beans:bean>
 
 
     <beans:bean id="loginSuccessHandler"
                 class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
-        <beans:property name="defaultTargetUrl" value="/"/>
+        <beans:property name="defaultTargetUrl" value="/login/getuser"/>
+        <beans:property name="alwaysUseDefaultTargetUrl" value="true"/>
+
+
     </beans:bean>
 
     <beans:bean id="loginFailureHandler"
                 class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
-        <beans:property name="defaultFailureUrl" value="/login?error=true"/>
+        <beans:constructor-arg index="0" type="java.lang.String" value="/login/getuser"/>
+
     </beans:bean>
 
 
-
-    <beans:bean id="sas" class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
+    <beans:bean id="sas"
+                class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
         <beans:constructor-arg>
             <beans:list>
-                <beans:bean class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
+                <beans:bean
+                        class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
                     <beans:constructor-arg ref="sessionRegistry"/>
-                    <beans:property name="maximumSessions" value="1" />
-                    <beans:property name="exceptionIfMaximumExceeded" value="true" />
+                    <beans:property name="maximumSessions" value="1"/>
+                    <beans:property name="exceptionIfMaximumExceeded" value="true"/>
                 </beans:bean>
-                <beans:bean class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy">
+                <beans:bean
+                        class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy">
                 </beans:bean>
-                <beans:bean class="org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy">
+                <beans:bean
+                        class="org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy">
                     <beans:constructor-arg ref="sessionRegistry"/>
                 </beans:bean>
             </beans:list>
@@ -72,7 +90,7 @@
 
 
     <beans:bean id="sessionRegistry"
-                class="org.springframework.security.core.session.SessionRegistryImpl" />
+                class="org.springframework.security.core.session.SessionRegistryImpl"/>
 
 
     <authentication-manager alias="authenticationManager">

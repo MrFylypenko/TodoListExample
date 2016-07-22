@@ -1,4 +1,4 @@
-package com.springtest.comtroller;
+package com.springtest.controller;
 
 import com.springtest.model.Status;
 import com.springtest.model.entity.Task;

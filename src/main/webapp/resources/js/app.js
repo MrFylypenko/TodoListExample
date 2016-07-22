@@ -27,7 +27,7 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $resource
         })
         .when('/hello', {
             controller: 'MainController',
-            templateUrl: 'hello'
+            templateUrl: 'resources/tpl/about.html'
         })
         .when('/projects', {
             controller: 'ProjectController',

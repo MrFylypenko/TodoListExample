@@ -1,5 +1,16 @@
 <div>
-    <table class="table">
+
+
+
+
+
+
+        <h3 class="alert alert-danger"  align = "center"  ng-hide="vm.projects.length > 0" > No projects! </h3>
+
+
+
+
+    <table class="table" ng-show="vm.projects.length > 0">
         <thead>
         <tr>
             <th ng-click="vm.field='id'; vm.reverse = !vm.reverse; vm.getAll()">
@@ -149,8 +160,8 @@
                         <td>{{task.status}}</td>
                         <td>{{task.createdDate | date:'yyyy-MM-dd HH:mm'}}</td>
                         <td>{{task.priority}}</td>
-                        <td>{{task.createdBy.username}}</td>
-                        <td>{{task.performer.username}}</td>
+                        <td>{{task.createdBy.firstName}} {{task.createdBy.lastName}}</td>
+                        <td>{{task.performer.firstName}} {{task.performer.lastName}}</td>
                         <td>
                             <button class="btn btn-warning btn-xs glyphicon glyphicon-pencil"
                                     data-ng-click="vm.modalEditTaskOpen(task.id)"></button>
@@ -207,45 +218,58 @@
         </tr>
         <tr ng-repeat-end>
         </tr>
+
+
+        <tr>
+            <td colspan="6">
+
+                <p>Page {{vm.page + 1}} from {{vm.pageLength + 1}}</p>
+
+
+                <ul class="pager">
+                    <li class="previous" ng-click="vm.previous(true)"
+                        ng-class="{'disabled': vm.page == 0}">
+                        <a href="#"><i class="fa fa-chevron-left"></i><i class="fa fa-chevron-left"></i> First page</a>
+                    </li>
+                    <li class="previous" ng-click="vm.previous()"
+                        ng-class="{'disabled': vm.page == 0}">
+                        <a href="#"><i class="fa fa-chevron-left"></i> Previous page</a>
+                    </li>
+
+
+                    <li ng-click="vm.page = vm.page -2; vm.getAll();" ng-show="(vm.page -1)> 0">
+                        <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page -1}}</a>
+                    </li>
+                    <li ng-click="vm.page = vm.page -1; vm.getAll();" ng-show="(vm.page -0) > 0">
+                        <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page }}</a>
+                    </li>
+                    <li class="disabled">
+                        <a style="color:red" href="#"><i class="fa fa-chevron-left"></i> {{vm.page + 1}}</a>
+                    </li>
+                    <li ng-click="vm.page = vm.page + 1 ; vm.getAll();" ng-show="(vm.page +1) < vm.pageLength + 1">
+                        <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page + 2}} </a>
+                    </li>
+                    <li ng-click="vm.page = vm.page + 2; vm.getAll();" ng-show="(vm.page +2) < vm.pageLength + 1">
+                        <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page + 3}} </a>
+                    </li>
+
+
+                    <li class="next" ng-click="vm.next(true)" ng-class="{'disabled' : vm.pageLength <= vm.page}">
+                        <a href="#">Last page <i class="fa fa-chevron-right"></i><i class="fa fa-chevron-right"></i></a>
+                    </li>
+                    <li class="next" ng-click="vm.next()" ng-class="{'disabled' : vm.pageLength <= vm.page}">
+                        <a href="#">Next page <i class="fa fa-chevron-right"></i></a>
+                    </li>
+                </ul>
+
+
+            </td>
+
+        </tr>
+
+
         </tbody>
     </table>
-
-    <p>Page {{vm.page + 1}} from {{vm.pageLength + 1}}</p>
-    <ul class="pager">
-        <li class="previous" ng-click="vm.previous(true)"
-            ng-class="{'disabled': vm.page == 0}">
-            <a href="#"><i class="fa fa-chevron-left"></i><i class="fa fa-chevron-left"></i> First page</a>
-        </li>
-        <li class="previous" ng-click="vm.previous()"
-            ng-class="{'disabled': vm.page == 0}">
-            <a href="#"><i class="fa fa-chevron-left"></i> Previous page</a>
-        </li>
-
-
-        <li ng-click="vm.page = vm.page -2; vm.getAll();" ng-show="(vm.page -1)> 0">
-            <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page -1}}</a>
-        </li>
-        <li ng-click="vm.page = vm.page -1; vm.getAll();" ng-show="(vm.page -0) > 0">
-            <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page }}</a>
-        </li>
-        <li class="disabled">
-            <a style="color:red" href="#"><i class="fa fa-chevron-left"></i> {{vm.page + 1}}</a>
-        </li>
-        <li ng-click="vm.page = vm.page + 1 ; vm.getAll();" ng-show="(vm.page +1) < vm.pageLength + 1">
-            <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page + 2}} </a>
-        </li>
-        <li ng-click="vm.page = vm.page + 2; vm.getAll();" ng-show="(vm.page +2) < vm.pageLength + 1">
-            <a href="#"><i class="fa fa-chevron-left"></i> {{vm.page + 3}} </a>
-        </li>
-
-
-        <li class="next" ng-click="vm.next(true)" ng-class="{'disabled' : vm.pageLength <= vm.page}">
-            <a href="#">Last page <i class="fa fa-chevron-right"></i><i class="fa fa-chevron-right"></i></a>
-        </li>
-        <li class="next" ng-click="vm.next()" ng-class="{'disabled' : vm.pageLength <= vm.page}">
-            <a href="#">Next page <i class="fa fa-chevron-right"></i></a>
-        </li>
-    </ul>
 
 
 </div>

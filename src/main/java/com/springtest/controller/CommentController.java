@@ -1,4 +1,4 @@
-package com.springtest.comtroller;
+package com.springtest.controller;
 
 import com.springtest.model.entity.Comment;
 import com.springtest.model.entity.User;
