@@ -166,15 +166,15 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-           <!-- <plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <includes>
-                        <include>**/*Tests.java</include>
+                        <include>**/TestTests.java</include>
                     </includes>
                 </configuration>
             </plugin>
-            -->
+            
         </plugins>
     </build>
 </project>
